@@ -1,0 +1,33 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.BhaktiGarments" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/blue_dark</item>
+        <item name="colorPrimaryVariant">@color/blue_darker</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/blue_medium</item>
+        <item name="colorSecondaryVariant">@color/blue_mediumer</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <!--Background Color-->
+        <item name="backgroundColor">@color/blue_dark</item>
+        <!-- Toolbar -->
+        <item name="homeAsUpIndicator">@drawable/ic_back_arrow_24dp</item>
+    </style>
+
+    <style name="Theme.BhaktiGarments.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.BhaktiGarments.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="fontFamily">@font/lato_bold</item>
+        <item name="textAllCaps">true</item>
+        <item name="elevation">0dp</item>
+        <item name="android:elevation">0dp</item>
+    </style>
+
+    <style name="Theme.BhaktiGarments.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+</resources>
