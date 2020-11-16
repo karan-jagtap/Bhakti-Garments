@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 
 import com.clothing.bhaktigarments.classes.Product;
 import com.clothing.bhaktigarments.classes.Shop;
+import com.clothing.bhaktigarments.classes.Worker;
 
 import java.util.ArrayList;
 
@@ -27,6 +28,11 @@ public class LocalDatabase extends SQLiteOpenHelper {
 
     // Product : Constants
     private static final String TABLE_PRODUCT = "product";
+
+    // Worker : Constants
+    private static final String KEY_CONTACT_NO = "contact_no";
+    private static final String KEY_MACHINE_NO = "machine_no";
+    private static final String TABLE_WORKER = "worker";
 
     // Shop : TABLE
     // Query : create table shop (id integer not null primary key autoincrement, uid text, name text);
@@ -46,6 +52,17 @@ public class LocalDatabase extends SQLiteOpenHelper {
                     KEY_NAME + " TEXT" +
                     ");";
 
+    // Worker : TABLE
+    // Query : create table worker (id integer not null primary key autoincrement, uid text, name text, contact_no text, machine_no text);
+    private static final String CREATE_TABLE_WORKER =
+            "CREATE TABLE " + TABLE_WORKER + " (" +
+                    KEY_ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+                    KEY_UID + " TEXT, " +
+                    KEY_NAME + " TEXT, " +
+                    KEY_CONTACT_NO + " TEXT, " +
+                    KEY_MACHINE_NO + " TEXT " +
+                    ");";
+
     // variables
     private Context context;
 
@@ -58,6 +75,7 @@ public class LocalDatabase extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_TABLE_SHOP);
         db.execSQL(CREATE_TABLE_PRODUCT);
+        db.execSQL(CREATE_TABLE_WORKER);
     }
 
     @Override
@@ -89,6 +107,39 @@ public class LocalDatabase extends SQLiteOpenHelper {
 
         // Check if insertion successful
         if (selectQueryTable(shop.getName(), TABLE_SHOP)) {
+            response.setErrorCode(0);
+            return response;
+        }
+        response.setErrorCode(2);
+        return response;
+    }
+
+    // @context : REGISTER WORKER
+    // @desc : Registers a new worker
+    // @params : Worker.class
+    // @returns : ResponseHandler
+    public ResponseHandler registerWorker(Worker worker) {
+        ResponseHandler response = new ResponseHandler();
+
+        // Checking if a worker with same name is already present.
+        if (selectQueryTable(worker.getName(), TABLE_WORKER)) {
+            response.setErrorCode(5);
+            return response;
+        }
+
+        // Insert new Worker
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(KEY_UID, worker.getUid());
+        cv.put(KEY_NAME, worker.getName());
+        cv.put(KEY_CONTACT_NO, worker.getContactNo());
+        cv.put(KEY_MACHINE_NO, worker.getMachineNo());
+        db.insert(TABLE_WORKER, null, cv);
+        cv.clear();
+        db.close();
+
+        // Check if insertion successful
+        if (selectQueryTable(worker.getName(), TABLE_WORKER)) {
             response.setErrorCode(0);
             return response;
         }
@@ -151,7 +202,7 @@ public class LocalDatabase extends SQLiteOpenHelper {
         }
         response.setErrorCode(3);
         Product product = new Product();
-        product.setName("No Data Found.");
+        product.setName("No Data Found");
         arrayList.clear();
         arrayList.add(product);
         response.setProductArrayList(arrayList);

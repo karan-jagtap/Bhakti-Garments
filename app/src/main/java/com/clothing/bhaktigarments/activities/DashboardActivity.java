@@ -56,7 +56,7 @@ public class DashboardActivity extends AppCompatActivity {
         registerWorkerL.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                startActivity(new Intent(DashboardActivity.this, RegisterWorkerActivity.class));
             }
         });
 

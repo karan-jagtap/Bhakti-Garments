@@ -44,9 +44,11 @@ public class ProductAdapter extends ArrayAdapter<Product> {
         TextView name = view.findViewById(R.id.textView_single_item_list_view);
         ImageView delete = view.findViewById(R.id.imageView_single_item_list_view);
         name.setText(product.getName());
-        if (product.getName().equals("No Data Found.")) {
+        if (product.getName().equals("No Data Found")) {
             delete.setVisibility(View.GONE);
             name.setTextColor(Color.RED);
+            name.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            name.setText("¯\\_(ツ)_/¯ "+product.getName()+" ¯\\_(ツ)_/¯");
         } else {
             name.setTextColor(activity.getColor(R.color.black));
         }
@@ -89,7 +91,7 @@ public class ProductAdapter extends ArrayAdapter<Product> {
             Log.i(AppConfig.APP_NAME,"size = "+arrayList.size());
             if (arrayList.size() == 0) {
                 Product p = new Product();
-                p.setName("No Data Found.");
+                p.setName("No Data Found");
                 arrayList.clear();
                 arrayList.add(p);
             }

@@ -32,10 +32,13 @@ public class ResponseHandler {
                 errorMessage = "Internal Database error";
                 break;
             case 3:
-                errorMessage = "No Data Found.";
+                errorMessage = "No Data Found";
                 break;
             case 4:
                 errorMessage = "Product with {} name already exists";
+                break;
+            case 5:
+                errorMessage = "Worker with {} name already exists";
                 break;
         }
         return errorMessage;
