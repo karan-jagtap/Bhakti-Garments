@@ -8,7 +8,6 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 
 import com.clothing.bhaktigarments.R;
@@ -43,7 +42,7 @@ public class DashboardActivity extends AppCompatActivity {
         registerShopL.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(DashboardActivity.this, ShopActivity.class));
+                startActivity(new Intent(DashboardActivity.this, RegisterShopActivity.class));
             }
         });
 

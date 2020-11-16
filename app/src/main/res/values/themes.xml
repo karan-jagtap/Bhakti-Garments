@@ -23,7 +23,7 @@
     </style>
 
     <style name="Theme.BhaktiGarments.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
-        <item name="fontFamily">@font/lato_bold</item>
+        <item name="fontFamily">@font/opensans_bold</item>
         <item name="textAllCaps">true</item>
         <item name="elevation">0dp</item>
         <item name="android:elevation">0dp</item>

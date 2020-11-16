@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/blue_dark"
     android:orientation="vertical"
-    tools:context=".activities.ShopActivity">
+    tools:context=".activities.RegisterShopActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -14,7 +14,7 @@
         android:theme="@style/Theme.BhaktiGarments.AppBarOverlay">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar_ShopActivity"
+            android:id="@+id/toolbar_RegisterShopActivity"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
@@ -41,7 +41,7 @@
             android:textSize="15sp" />
 
         <EditText
-            android:id="@+id/editText_name_ShopActivity"
+            android:id="@+id/editText_name_RegisterShopActivity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -54,12 +54,12 @@
             android:padding="10dp" />
 
         <ImageView
-            android:id="@+id/imageView_ShopActivity"
+            android:id="@+id/imageView_RegisterShopActivity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <TextView
-            android:id="@+id/textView_imageName_ShopActivity"
+            android:id="@+id/textView_imageName_RegisterShopActivity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
@@ -71,7 +71,7 @@
 
         <TextView
             android:visibility="gone"
-            android:id="@+id/textView_message_ShopActivity"
+            android:id="@+id/textView_message_RegisterShopActivity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
@@ -81,7 +81,7 @@
             android:textColor="@color/blue_medium" />
 
         <Button
-            android:id="@+id/save_ShopActivity"
+            android:id="@+id/save_RegisterShopActivity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"

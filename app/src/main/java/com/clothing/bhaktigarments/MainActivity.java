@@ -20,7 +20,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.clothing.bhaktigarments.activities.DashboardActivity;
-import com.clothing.bhaktigarments.activities.ShopActivity;
 import com.clothing.bhaktigarments.config.AppConfig;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.integration.android.IntentIntegrator;

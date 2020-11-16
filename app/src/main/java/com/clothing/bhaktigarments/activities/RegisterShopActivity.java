@@ -40,7 +40,7 @@ import java.util.UUID;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class ShopActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
+public class RegisterShopActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
 
     // Components
     private EditText shopNameED;
@@ -54,8 +54,8 @@ public class ShopActivity extends AppCompatActivity implements EasyPermissions.P
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_shop);
-        Toolbar toolbar = findViewById(R.id.toolbar_ShopActivity);
+        setContentView(R.layout.activity_register_shop);
+        Toolbar toolbar = findViewById(R.id.toolbar_RegisterShopActivity);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
@@ -65,11 +65,11 @@ public class ShopActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     private void declarations() {
-        shopNameED = findViewById(R.id.editText_name_ShopActivity);
-        saveBtn = findViewById(R.id.save_ShopActivity);
-        imageView = findViewById(R.id.imageView_ShopActivity); // default : hidden
-        imageNameTV = findViewById(R.id.textView_imageName_ShopActivity); // default : hidden
-        messageTV = findViewById(R.id.textView_message_ShopActivity); // default : hidden
+        shopNameED = findViewById(R.id.editText_name_RegisterShopActivity);
+        saveBtn = findViewById(R.id.save_RegisterShopActivity);
+        imageView = findViewById(R.id.imageView_RegisterShopActivity); // default : hidden
+        imageNameTV = findViewById(R.id.textView_imageName_RegisterShopActivity); // default : hidden
+        messageTV = findViewById(R.id.textView_message_RegisterShopActivity); // default : hidden
 
         shop = new Shop();
     }
@@ -82,7 +82,7 @@ public class ShopActivity extends AppCompatActivity implements EasyPermissions.P
                 if (!shop.getName().isEmpty()) {
                     getPermission();
                 } else {
-                    Toast.makeText(ShopActivity.this, "Please Enter Shop Name", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterShopActivity.this, "Please Enter Shop Name", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -179,7 +179,7 @@ public class ShopActivity extends AppCompatActivity implements EasyPermissions.P
             fos.close();
             imageNameTV.setText(fileName);
             showSuccessComponents();
-            MediaScannerConnection.scanFile(ShopActivity.this,
+            MediaScannerConnection.scanFile(RegisterShopActivity.this,
                     new String[]{file.toString()}, new String[]{"image/png"},
                     new MediaScannerConnection.OnScanCompletedListener() {
                         @Override
@@ -197,7 +197,7 @@ public class ShopActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     private boolean addDataToLocalDB() {
-        LocalDatabase db = new LocalDatabase(ShopActivity.this);
+        LocalDatabase db = new LocalDatabase(RegisterShopActivity.this);
         ResponseHandler response = db.registerShop(shop);
         if (response.getErrorCode() == 0) {
             showSuccessComponents();
