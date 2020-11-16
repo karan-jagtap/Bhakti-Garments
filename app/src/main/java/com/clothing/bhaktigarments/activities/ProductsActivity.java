@@ -26,7 +26,7 @@ public class ProductsActivity extends AppCompatActivity {
 
     // components
     private Button addBT;
-    private EditText nameED;
+    private EditText serialNoED, nameED;
     private ListView listView;
     private TextView messageTV;
 
@@ -51,6 +51,7 @@ public class ProductsActivity extends AppCompatActivity {
 
     private void declarations() {
         addBT = findViewById(R.id.button_add_ProductsActivity);
+        serialNoED = findViewById(R.id.editText_serial_no_ProductsActivity);
         nameED = findViewById(R.id.editText_name_ProductsActivity);
         listView = findViewById(R.id.listView_products_ProductsActivity);
         messageTV = findViewById(R.id.textView_message_ProductsActivity);
@@ -63,26 +64,38 @@ public class ProductsActivity extends AppCompatActivity {
         addBT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                product.setSerialNo(serialNoED.getText().toString().trim());
                 product.setName(nameED.getText().toString().trim());
-                if (!product.getName().isEmpty()) {
+                if (!product.getName().isEmpty() && !product.getSerialNo().isEmpty()) {
+                    Log.i(AppConfig.APP_NAME, "both not empty");
                     product.setUid(UUID.randomUUID().toString());
                     ResponseHandler response = db.addProduct(product);
+                    Log.i(AppConfig.APP_NAME, "Add response inside = " + response.getErrorCode());
                     if (response.getErrorCode() == 0) {
                         setSuccess("New Product Added");
+                        Log.i(AppConfig.APP_NAME, "New product added");
                         loadProductList();
                     } else if (response.getErrorCode() == 4) {
-                        Log.i(AppConfig.APP_NAME, "Dup item");
+                        Log.i(AppConfig.APP_NAME, "Duplicate item");
                         setError(response.getErrorMessage(4).replace("{}", product.getName()));
+                    } else if (response.getErrorCode() == 6) {
+                        Log.i(AppConfig.APP_NAME, "Duplicate item");
+                        setError(response.getErrorMessage(6).replace("{}", product.getSerialNo()));
                     }
                 } else {
                     Log.i(AppConfig.APP_NAME, "Dup item");
-                    setError("Please Enter Product's Name to Add");
+                    if (product.getSerialNo().isEmpty()) {
+                        setError("Please Enter Product's Serial No.");
+                    } else {
+                        setError("Please Enter Product's Name");
+                    }
                 }
             }
         });
     }
 
     private void loadProductList() {
+        Log.i(AppConfig.APP_NAME, "loadProductList()");
         productArrayList = db.getAllProducts().getProductArrayList();
         ProductAdapter adapter = new ProductAdapter(ProductsActivity.this, productArrayList);
         listView.setAdapter(adapter);
@@ -95,6 +108,7 @@ public class ProductsActivity extends AppCompatActivity {
     }
 
     private void setSuccess(String message) {
+        serialNoED.setText("");
         nameED.setText("");
         messageTV.setText(message);
         messageTV.setTextColor(getColor(R.color.blue_medium));

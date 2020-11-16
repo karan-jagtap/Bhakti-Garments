@@ -5,12 +5,14 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
 import com.clothing.bhaktigarments.classes.Product;
 import com.clothing.bhaktigarments.classes.Shop;
 import com.clothing.bhaktigarments.classes.Worker;
+import com.clothing.bhaktigarments.config.AppConfig;
 
 import java.util.ArrayList;
 
@@ -27,6 +29,7 @@ public class LocalDatabase extends SQLiteOpenHelper {
     private static final String TABLE_SHOP = "shop";
 
     // Product : Constants
+    private static final String KEY_SERIAL_NO = "serial_no";
     private static final String TABLE_PRODUCT = "product";
 
     // Worker : Constants
@@ -49,6 +52,7 @@ public class LocalDatabase extends SQLiteOpenHelper {
             "CREATE TABLE " + TABLE_PRODUCT + " (" +
                     KEY_ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                     KEY_UID + " TEXT, " +
+                    KEY_SERIAL_NO + " TEXT, " +
                     KEY_NAME + " TEXT" +
                     ");";
 
@@ -91,7 +95,7 @@ public class LocalDatabase extends SQLiteOpenHelper {
         ResponseHandler response = new ResponseHandler();
 
         // Checking if a shop with same name is already present.
-        if (selectQueryTable(shop.getName(), TABLE_SHOP)) {
+        if (selectQueryTable(shop.getName(), TABLE_SHOP, KEY_NAME)) {
             response.setErrorCode(1);
             return response;
         }
@@ -106,7 +110,7 @@ public class LocalDatabase extends SQLiteOpenHelper {
         db.close();
 
         // Check if insertion successful
-        if (selectQueryTable(shop.getName(), TABLE_SHOP)) {
+        if (selectQueryTable(shop.getName(), TABLE_SHOP, KEY_NAME)) {
             response.setErrorCode(0);
             return response;
         }
@@ -122,7 +126,7 @@ public class LocalDatabase extends SQLiteOpenHelper {
         ResponseHandler response = new ResponseHandler();
 
         // Checking if a worker with same name is already present.
-        if (selectQueryTable(worker.getName(), TABLE_WORKER)) {
+        if (selectQueryTable(worker.getName(), TABLE_WORKER, KEY_NAME)) {
             response.setErrorCode(5);
             return response;
         }
@@ -139,7 +143,7 @@ public class LocalDatabase extends SQLiteOpenHelper {
         db.close();
 
         // Check if insertion successful
-        if (selectQueryTable(worker.getName(), TABLE_WORKER)) {
+        if (selectQueryTable(worker.getName(), TABLE_WORKER, KEY_NAME)) {
             response.setErrorCode(0);
             return response;
         }
@@ -155,22 +159,29 @@ public class LocalDatabase extends SQLiteOpenHelper {
         ResponseHandler response = new ResponseHandler();
 
         // Checking if a product with same name is already present.
-        if (selectQueryTable(product.getName(), TABLE_PRODUCT)) {
+        if (selectQueryTable(product.getName(), TABLE_PRODUCT, KEY_NAME)) {
             response.setErrorCode(4);
             return response;
         }
 
-        // Insert new Produc
+        // Checking if a product with same serial no. is already present.
+        if (selectQueryTable(product.getSerialNo(), TABLE_PRODUCT, KEY_SERIAL_NO)) {
+            response.setErrorCode(6);
+            return response;
+        }
+
+        // Insert new Product
         SQLiteDatabase db = getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(KEY_UID, product.getUid());
+        cv.put(KEY_SERIAL_NO, product.getSerialNo());
         cv.put(KEY_NAME, product.getName());
         db.insert(TABLE_PRODUCT, null, cv);
         cv.clear();
         db.close();
 
         // Check if insertion successful
-        if (selectQueryTable(product.getName(), TABLE_PRODUCT)) {
+        if (selectQueryTable(product.getSerialNo(), TABLE_PRODUCT, KEY_SERIAL_NO)) {
             response.setErrorCode(0);
             return response;
         }
@@ -193,7 +204,9 @@ public class LocalDatabase extends SQLiteOpenHelper {
             while (cursor.moveToNext()) {
                 Product product = new Product();
                 product.setUid(cursor.getString(1));
-                product.setName(cursor.getString(2));
+                product.setSerialNo(cursor.getString(2));
+                Log.i(AppConfig.APP_NAME, "serial no - " + product.getSerialNo());
+                product.setName(cursor.getString(3));
                 arrayList.add(product);
             }
             response.setErrorCode(0);
@@ -233,12 +246,13 @@ public class LocalDatabase extends SQLiteOpenHelper {
     // @desc : Checks if shop is present
     // @params : String
     // @returns : boolean
-    private boolean selectQueryTable(String name, String TABLE_NAME) {
+    private boolean selectQueryTable(String name, String TABLE_NAME, String KEY) {
         SQLiteDatabase db = getReadableDatabase();
         String selectQuery = "SELECT * FROM " + TABLE_NAME +
                 " WHERE " +
-                KEY_NAME + " = '" + name +
+                KEY + " = '" + name +
                 "';";
+        Log.i(AppConfig.APP_NAME, "SELECT query = " + selectQuery);
         Cursor cursor = db.rawQuery(selectQuery, null);
         if (cursor.getCount() > 0) {
             cursor.close();

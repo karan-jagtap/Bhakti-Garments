@@ -40,6 +40,9 @@ public class ResponseHandler {
             case 5:
                 errorMessage = "Worker with {} name already exists";
                 break;
+            case 6:
+                errorMessage = "Product with {} serial no. already exists";
+                break;
         }
         return errorMessage;
     }

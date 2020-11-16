@@ -43,12 +43,12 @@ public class ProductAdapter extends ArrayAdapter<Product> {
         Product product = arrayList.get(position);
         TextView name = view.findViewById(R.id.textView_single_item_list_view);
         ImageView delete = view.findViewById(R.id.imageView_single_item_list_view);
-        name.setText(product.getName());
+        name.setText(product.getSerialNo() + " : " + product.getName());
         if (product.getName().equals("No Data Found")) {
             delete.setVisibility(View.GONE);
             name.setTextColor(Color.RED);
             name.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-            name.setText("¯\\_(ツ)_/¯ "+product.getName()+" ¯\\_(ツ)_/¯");
+            name.setText("¯\\_(ツ)_/¯ " + product.getName() + " ¯\\_(ツ)_/¯");
         } else {
             name.setTextColor(activity.getColor(R.color.black));
         }
@@ -66,7 +66,7 @@ public class ProductAdapter extends ArrayAdapter<Product> {
         AlertDialog alertDialog = new AlertDialog.Builder(activity).create();
         alertDialog.setTitle("Warning");
         alertDialog.setCancelable(true);
-        alertDialog.setMessage("Product '" + product.getName() + "' will be deleted permanently.\nAre you sure to delete it?");
+        alertDialog.setMessage("Product "+product.getSerialNo()+" :\n'" + product.getName() + "'\nwill be deleted permanently.\nAre you sure to delete it?");
         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NO", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -85,10 +85,10 @@ public class ProductAdapter extends ArrayAdapter<Product> {
     private void deleteProduct(Product product) {
         LocalDatabase db = new LocalDatabase(activity);
         ResponseHandler response = db.deleteProduct(product.getUid());
-        Log.i(AppConfig.APP_NAME, ""+response.getErrorCode());
+        Log.i(AppConfig.APP_NAME, "" + response.getErrorCode());
         if (response.getErrorCode() == 0) {
             remove(product);
-            Log.i(AppConfig.APP_NAME,"size = "+arrayList.size());
+            Log.i(AppConfig.APP_NAME, "size = " + arrayList.size());
             if (arrayList.size() == 0) {
                 Product p = new Product();
                 p.setName("No Data Found");

@@ -36,7 +36,30 @@
             android:layout_marginEnd="16dp"
             android:fontFamily="@font/amiko_regular"
             android:letterSpacing="0"
-            android:text="Enter Product Name :"
+            android:text="Enter Serial No. :"
+            android:textColor="@android:color/black"
+            android:textSize="15sp" />
+
+        <EditText
+            android:id="@+id/editText_serial_no_ProductsActivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/drawable_outline_blue"
+            android:fontFamily="@font/amiko_regular"
+            android:inputType="number"
+            android:padding="10dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:fontFamily="@font/amiko_regular"
+            android:letterSpacing="0"
+            android:text="Enter Name :"
             android:textColor="@android:color/black"
             android:textSize="15sp" />
 
