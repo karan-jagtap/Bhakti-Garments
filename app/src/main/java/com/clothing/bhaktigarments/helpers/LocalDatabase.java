@@ -165,6 +165,8 @@ public class LocalDatabase extends SQLiteOpenHelper {
         }
 
         // Checking if a product with same serial no. is already present.
+        // 19/11/2020 - As per client's requirements this doesn't need to satisfy,
+        //              but will continue with this and then act on feedback.
         if (selectQueryTable(product.getSerialNo(), TABLE_PRODUCT, KEY_SERIAL_NO)) {
             response.setErrorCode(6);
             return response;
@@ -263,5 +265,25 @@ public class LocalDatabase extends SQLiteOpenHelper {
         db.close();
         return false;
     }
+
+    public int checkUid(String uid) {
+        SQLiteDatabase db = getReadableDatabase();
+        String selectQuery = "SELECT * FROM " + TABLE_SHOP + " WHERE " + KEY_UID + " = '" + uid + "';";
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        if (cursor.getCount() > 0) {
+            cursor.close();
+            db.close();
+            return AppConfig.SHOP_UID;
+        }
+        selectQuery = "SELECT * FROM " + TABLE_WORKER + " WHERE " + KEY_UID + " = '" + uid + "';";
+        cursor = db.rawQuery(selectQuery, null);
+        if (cursor.getCount() > 0) {
+            cursor.close();
+            db.close();
+            return AppConfig.WORKER_UID;
+        }
+        return 0;
+    }
+
     // END :: UTILITIES
 }

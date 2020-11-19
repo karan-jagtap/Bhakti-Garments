@@ -51,7 +51,8 @@
             android:fontFamily="@font/amiko_regular"
             android:hint="eg. Blackberry"
             android:inputType="textPersonName|textCapWords"
-            android:padding="10dp" />
+            android:padding="8dp"
+            android:textSize="16sp" />
 
         <ImageView
             android:id="@+id/imageView_RegisterShopActivity"
@@ -70,7 +71,6 @@
             android:visibility="gone" />
 
         <TextView
-            android:visibility="gone"
             android:id="@+id/textView_message_RegisterShopActivity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -78,7 +78,8 @@
             android:layout_marginBottom="10dp"
             android:text="This QR Code image will be store in Pictures/Bhakti Garments folder."
             android:textAlignment="center"
-            android:textColor="@color/blue_medium" />
+            android:textColor="@color/blue_medium"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/save_RegisterShopActivity"

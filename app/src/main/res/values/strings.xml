@@ -13,4 +13,5 @@
     <string name="hello_world">Hello Square World!</string>
     <string name="title_activity_products">Products</string>
     <string name="title_activity_worker">Register Worker</string>
+    <string name="worker_details">Worker Details</string>
 </resources>

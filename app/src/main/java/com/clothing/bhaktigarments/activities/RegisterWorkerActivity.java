@@ -11,6 +11,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -70,6 +71,12 @@ public class RegisterWorkerActivity extends AppCompatActivity implements EasyPer
             public void onClick(View v) {
                 if (checkData()) {
                     getPermission();
+                    try {
+                        InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                    } catch (Exception e) {
+                        // TODO: handle exception
+                    }
                 }
             }
         });
@@ -124,8 +131,8 @@ public class RegisterWorkerActivity extends AppCompatActivity implements EasyPer
         if (response.getErrorCode() == 0) {
             Log.i(AppConfig.APP_NAME, "response = 0");
             clearComponents();
-            generateQRCode();
-
+            // generateQRCode();
+            checkBuildVersion();
         } else if (response.getErrorCode() == 5) {
             Log.i(AppConfig.APP_NAME, "response = 5");
             showErrorComponents();
@@ -137,31 +144,13 @@ public class RegisterWorkerActivity extends AppCompatActivity implements EasyPer
     private void generateQRCode() {
         try {
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-            Bitmap bitmap = barcodeEncoder.encodeBitmap(worker.toString(), BarcodeFormat.QR_CODE, 400, 400);
+            Bitmap bitmap = barcodeEncoder.encodeBitmap(worker.getUid(), BarcodeFormat.QR_CODE, 400, 400);
             imageView.setImageBitmap(bitmap);
             Log.i(AppConfig.APP_NAME, "Current Build version :: " + Build.VERSION.SDK_INT);
-            if (Build.VERSION.SDK_INT >= 29) {
-                saveImage(bitmap);
-            } else {
-                String appDirectoryPath = Environment.getExternalStorageDirectory().toString() +
-                        "/" + Environment.DIRECTORY_PICTURES + "/Bhakti Garments";
-                File appDirectory = new File(appDirectoryPath);
-                if (!appDirectory.exists()) {
-                    if (appDirectory.mkdir()) {
-                        appDirectoryPath = appDirectoryPath + "/Workers";
-                        appDirectory = new File(appDirectoryPath);
-                        if (!appDirectory.exists()) {
-                            if (appDirectory.mkdir()) {
-                                saveImage(bitmap, appDirectory);
-                            }
-                        } else {
-                            saveImage(bitmap, appDirectory);
-                        }
-                    } else {
-                        Log.i(AppConfig.APP_NAME, "Something went wrong while creating directory at :\n" + appDirectoryPath);
-                    }
-                } else {
-                    Log.i(AppConfig.APP_NAME, appDirectory.toString() + " already exists");
+            String appDirectoryPath = Environment.getExternalStorageDirectory().toString() + "/Bhakti Garments";
+            File appDirectory = new File(appDirectoryPath);
+            if (!appDirectory.exists()) {
+                if (appDirectory.mkdir()) {
                     appDirectoryPath = appDirectoryPath + "/Workers";
                     appDirectory = new File(appDirectoryPath);
                     if (!appDirectory.exists()) {
@@ -171,6 +160,19 @@ public class RegisterWorkerActivity extends AppCompatActivity implements EasyPer
                     } else {
                         saveImage(bitmap, appDirectory);
                     }
+                } else {
+                    Log.i(AppConfig.APP_NAME, "Something went wrong while creating directory at :\n" + appDirectoryPath);
+                }
+            } else {
+                Log.i(AppConfig.APP_NAME, appDirectory.toString() + " already exists");
+                appDirectoryPath = appDirectoryPath + "/Workers";
+                appDirectory = new File(appDirectoryPath);
+                if (!appDirectory.exists()) {
+                    if (appDirectory.mkdir()) {
+                        saveImage(bitmap, appDirectory);
+                    }
+                } else {
+                    saveImage(bitmap, appDirectory);
                 }
             }
         } catch (Exception e) {
@@ -179,7 +181,6 @@ public class RegisterWorkerActivity extends AppCompatActivity implements EasyPer
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.Q)
     private void saveImage(Bitmap bitmap) {
         try {
             ContentValues cv = new ContentValues();
@@ -213,7 +214,7 @@ public class RegisterWorkerActivity extends AppCompatActivity implements EasyPer
     }
 
     private void saveImage(Bitmap bitmap, File appDirectory) throws Exception {
-        String fileName = worker.getName() + ".png";
+        String fileName = worker.getUid() + ".png";
         File file = new File(appDirectory, fileName);
         if (!file.exists()) {
             FileOutputStream fos = new FileOutputStream(file);
@@ -253,7 +254,7 @@ public class RegisterWorkerActivity extends AppCompatActivity implements EasyPer
         imageNameTV.setVisibility(View.VISIBLE);
         messageTV.setVisibility(View.VISIBLE);
         messageTV.setTextColor(getColor(R.color.blue_medium));
-        messageTV.setText("This QR Code image is stored in Pictures/Bhakti Garments/Workers folder.");
+        messageTV.setText("This QR Code image is stored in Bhakti Garments/Workers folder.");
     }
 
     private void clearComponents() {
@@ -261,6 +262,14 @@ public class RegisterWorkerActivity extends AppCompatActivity implements EasyPer
         nameED.setText("");
         contactED.setText("");
         machineED.setText("");
+    }
+
+    private void checkBuildVersion() {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
+            //dialog.showMessage("This feature is not supported for Android 11 ie. Android R by the Developer of this application.\nContact Developer for further details.");
+        } else {
+            generateQRCode();
+        }
     }
 
     @AfterPermissionGranted(29)

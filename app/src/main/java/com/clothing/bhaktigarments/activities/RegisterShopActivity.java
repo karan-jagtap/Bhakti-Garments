@@ -12,6 +12,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -27,6 +28,7 @@ import com.clothing.bhaktigarments.R;
 import com.clothing.bhaktigarments.classes.Shop;
 import com.clothing.bhaktigarments.config.AppConfig;
 import com.clothing.bhaktigarments.helpers.LocalDatabase;
+import com.clothing.bhaktigarments.helpers.MessageDialog;
 import com.clothing.bhaktigarments.helpers.ResponseHandler;
 import com.google.zxing.BarcodeFormat;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
@@ -50,6 +52,10 @@ public class RegisterShopActivity extends AppCompatActivity implements EasyPermi
 
     // Data
     private Shop shop;
+    private boolean permissionGranted = false;
+
+    // Helper
+    private MessageDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +66,7 @@ public class RegisterShopActivity extends AppCompatActivity implements EasyPermi
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
 
+        Log.i(AppConfig.APP_NAME, "" + Environment.getExternalStorageDirectory().toString());
         declarations();
         listeners();
     }
@@ -72,6 +79,7 @@ public class RegisterShopActivity extends AppCompatActivity implements EasyPermi
         messageTV = findViewById(R.id.textView_message_RegisterShopActivity); // default : hidden
 
         shop = new Shop();
+        dialog = new MessageDialog(RegisterShopActivity.this);
     }
 
     private void listeners() {
@@ -81,58 +89,32 @@ public class RegisterShopActivity extends AppCompatActivity implements EasyPermi
                 shop.setName(shopNameED.getText().toString().trim());
                 if (!shop.getName().isEmpty()) {
                     getPermission();
+                    try {
+                        InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                    } catch (Exception e) {
+                        // TODO: handle exception
+                    }
                 } else {
-                    Toast.makeText(RegisterShopActivity.this, "Please Enter Shop Name", Toast.LENGTH_SHORT).show();
+                    //dialog.showMessage("Please Enter Shop Name");
+                    showErrorComponents("Please Enter Shop Name");
                 }
             }
         });
-    }
-
-    @AfterPermissionGranted(29)
-    private void getPermission() {
-        String[] perms = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        if (EasyPermissions.hasPermissions(this, perms)) {
-            // Already have permission, do the thing
-            generateAndSaveQRCode();
-        } else {
-            // Do not have permissions, request them now
-            EasyPermissions.requestPermissions(this, "This is this",
-                    29, perms);
-        }
     }
 
     private void generateAndSaveQRCode() {
         try {
             shop.setUid(UUID.randomUUID().toString());
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-            Bitmap bitmap = barcodeEncoder.encodeBitmap(shop.toString(), BarcodeFormat.QR_CODE, 400, 400);
+            Bitmap bitmap = barcodeEncoder.encodeBitmap(shop.getUid(), BarcodeFormat.QR_CODE, 400, 400);
             imageView.setImageBitmap(bitmap);
             Log.i(AppConfig.APP_NAME, "Current Build version :: " + Build.VERSION.SDK_INT);
-            if (Build.VERSION.SDK_INT >= 29) {
-                if (addDataToLocalDB()) {
-                    saveImage(bitmap);
-                }
-            } else {
-                String appDirectoryPath = Environment.getExternalStorageDirectory().toString() + "/" + Environment.DIRECTORY_PICTURES + "/Bhakti Garments";
-                File appDirectory = new File(appDirectoryPath);
-                if (!appDirectory.exists()) {
-                    if (appDirectory.mkdir()) {
-                        // call to save image
-                        appDirectoryPath = appDirectoryPath + "/Shops";
-                        appDirectory = new File(appDirectoryPath);
-                        if (!appDirectory.exists()) {
-                            if (appDirectory.mkdir()) {
-                                saveImage(bitmap, appDirectory);
-                            }
-                        } else {
-                            saveImage(bitmap, appDirectory);
-                        }
-                    } else {
-                        Log.i(AppConfig.APP_NAME, "Something went wrong while creating directory at :\n" + appDirectoryPath);
-                    }
-                } else {
-                    Log.i(AppConfig.APP_NAME, appDirectory.toString() + " already exists");
-                    // call to save image
+
+            String appDirectoryPath = Environment.getExternalStorageDirectory().toString() +  "/Bhakti Garments";
+            File appDirectory = new File(appDirectoryPath);
+            if (!appDirectory.exists()) {
+                if (appDirectory.mkdir()) {
                     appDirectoryPath = appDirectoryPath + "/Shops";
                     appDirectory = new File(appDirectoryPath);
                     if (!appDirectory.exists()) {
@@ -142,6 +124,19 @@ public class RegisterShopActivity extends AppCompatActivity implements EasyPermi
                     } else {
                         saveImage(bitmap, appDirectory);
                     }
+                } else {
+                    Log.i(AppConfig.APP_NAME, "Something went wrong while creating directory at :\n" + appDirectoryPath);
+                }
+            } else {
+                Log.i(AppConfig.APP_NAME, appDirectory.toString() + " already exists");
+                appDirectoryPath = appDirectoryPath + "/Shops";
+                appDirectory = new File(appDirectoryPath);
+                if (!appDirectory.exists()) {
+                    if (appDirectory.mkdir()) {
+                        saveImage(bitmap, appDirectory);
+                    }
+                } else {
+                    saveImage(bitmap, appDirectory);
                 }
             }
         } catch (Exception e) {
@@ -150,45 +145,15 @@ public class RegisterShopActivity extends AppCompatActivity implements EasyPermi
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.Q)
-    private void saveImage(Bitmap bitmap) {
-        try {
-            ContentValues cv = new ContentValues();
-            cv.put(MediaStore.Images.Media.MIME_TYPE, "image/png");
-            cv.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis());
-            cv.put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/Bhakti Garments/Shops");
-            cv.put(MediaStore.Images.Media.DISPLAY_NAME, shop.getName() + ".png");
-            cv.put(MediaStore.Images.Media.TITLE, shop.getName() + ".png");
-            cv.put(MediaStore.Images.Media.IS_PENDING, true);
-            Uri uri = this.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, cv);
-            if (uri != null) {
-                OutputStream os = this.getContentResolver().openOutputStream(uri);
-                if (os != null) {
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
-                    os.flush();
-                    os.close();
-                    imageNameTV.setText(uri.toString());
-                    showSuccessComponents();
-                } else {
-                    Toast.makeText(this, "Output steam NULL", Toast.LENGTH_SHORT).show();
-                }
-                this.getContentResolver().update(uri, cv, null, null);
-            } else {
-                Toast.makeText(this, "null uri", Toast.LENGTH_SHORT).show();
-            }
-        } catch (Exception e) {
-            Log.i(AppConfig.APP_NAME, "saveImage() exception :: " + e.getMessage());
-        }
-    }
-
     private void saveImage(Bitmap bitmap, File appDirectory) throws Exception {
-        String fileName = shop.getName() + ".png";
+        String fileName = shop.getUid() + ".png";
         File file = new File(appDirectory, fileName);
         if (!file.exists()) {
             FileOutputStream fos = new FileOutputStream(file);
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
             fos.flush();
             fos.close();
+            imageView.setImageBitmap(bitmap);
             imageNameTV.setText(fileName);
             showSuccessComponents();
             MediaScannerConnection.scanFile(RegisterShopActivity.this,
@@ -202,39 +167,60 @@ public class RegisterShopActivity extends AppCompatActivity implements EasyPermi
                     });
         } else {
             Log.i(AppConfig.APP_NAME, "Image with " + shop.getName() + " already exists.");
-            showErrorComponents();
-            messageTV.setText(new ResponseHandler().getErrorMessage(1).replace("{}", shop.getName()));
-            messageTV.setTextColor(Color.RED);
+            showErrorComponents(new ResponseHandler().getErrorMessage(1).replace("{}", shop.getName()));
         }
     }
 
-    private boolean addDataToLocalDB() {
+    private void addDataToLocalDB() {
         LocalDatabase db = new LocalDatabase(RegisterShopActivity.this);
         ResponseHandler response = db.registerShop(shop);
         if (response.getErrorCode() == 0) {
-            showSuccessComponents();
             shopNameED.setText("");
-            messageTV.setTextColor(getColor(R.color.blue_medium));
-            return true;
+            checkBuildVersion();
         } else if (response.getErrorCode() == 1) {
-            showErrorComponents();
-            messageTV.setText(response.getErrorMessage(1).replace("{}", shop.getName()));
-            messageTV.setTextColor(Color.RED);
+            showErrorComponents(response.getErrorMessage(1).replace("{}", shop.getName()));
         }
-        Log.i(AppConfig.APP_NAME, "DB error : " + response.getErrorMessage(response.getErrorCode()));
-        return false;
     }
 
-    private void showErrorComponents() {
+    private void showErrorComponents(String error) {
         imageView.setVisibility(View.GONE);
         imageNameTV.setVisibility(View.GONE);
         messageTV.setVisibility(View.VISIBLE);
+        messageTV.setText(error);
+        messageTV.setTextColor(Color.RED);
     }
 
     private void showSuccessComponents() {
         imageView.setVisibility(View.VISIBLE);
         imageNameTV.setVisibility(View.VISIBLE);
         messageTV.setVisibility(View.VISIBLE);
+        messageTV.setTextColor(getColor(R.color.blue_medium));
+        messageTV.setText("This QR Code image is stored in Bhakti Garments/Shops folder.");
+        imageView.requestFocus();
+    }
+
+    private void checkBuildVersion() {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
+            dialog.showMessage("This feature is not supported for Android 11 by the Developer of this application.\nContact Developer for further details.");
+        } else {
+            generateAndSaveQRCode();
+        }
+    }
+
+    @AfterPermissionGranted(29)
+    private void getPermission() {
+        String[] perms = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        if (EasyPermissions.hasPermissions(this, perms)) {
+            // Already have permission, do the thing
+            // generateAndSaveQRCode();
+            if (!permissionGranted) {
+                addDataToLocalDB();
+            }
+        } else {
+            // Do not have permissions, request them now
+            EasyPermissions.requestPermissions(this, "This is this",
+                    29, perms);
+        }
     }
 
     @Override
@@ -245,7 +231,8 @@ public class RegisterShopActivity extends AppCompatActivity implements EasyPermi
 
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
-        generateAndSaveQRCode();
+        permissionGranted = true;
+        addDataToLocalDB();
     }
 
     @Override
