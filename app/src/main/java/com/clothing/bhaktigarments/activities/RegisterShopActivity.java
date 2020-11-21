@@ -88,6 +88,7 @@ public class RegisterShopActivity extends AppCompatActivity implements EasyPermi
             public void onClick(View v) {
                 shop.setName(shopNameED.getText().toString().trim());
                 if (!shop.getName().isEmpty()) {
+                    shop.setUid(UUID.randomUUID().toString());
                     getPermission();
                     try {
                         InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
@@ -105,7 +106,6 @@ public class RegisterShopActivity extends AppCompatActivity implements EasyPermi
 
     private void generateAndSaveQRCode() {
         try {
-            shop.setUid(UUID.randomUUID().toString());
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
             Bitmap bitmap = barcodeEncoder.encodeBitmap(shop.getUid(), BarcodeFormat.QR_CODE, 400, 400);
             imageView.setImageBitmap(bitmap);

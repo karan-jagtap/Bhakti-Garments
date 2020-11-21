@@ -17,6 +17,11 @@ import com.clothing.bhaktigarments.helpers.MessageDialog;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class DashboardActivity extends AppCompatActivity {
 
     // components
@@ -37,8 +42,23 @@ public class DashboardActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayShowHomeEnabled(false);
 
+        checkAvailability();
+
         declarations();
         listeners();
+    }
+
+    private void checkAvailability() {
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+        Date today = new Date();
+        try {
+            Date endDate = format.parse(AppConfig.MAX_TIMER);
+            if (today.after(endDate)) {
+                finish();
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
     private void listeners() {
@@ -52,7 +72,7 @@ public class DashboardActivity extends AppCompatActivity {
         detailsShopL.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                scanShopQRCode();
+                scanQRCode();
             }
         });
 
@@ -66,7 +86,10 @@ public class DashboardActivity extends AppCompatActivity {
         detailsWorkerL.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                scanWorkerQRCode();
+                Intent i = new Intent(DashboardActivity.this, WorkerDetailsActivity.class);
+                i.putExtra("uid","1");
+                startActivity(i);
+                //scanQRCode();
             }
         });
 
@@ -97,15 +120,15 @@ public class DashboardActivity extends AppCompatActivity {
         dialog = new MessageDialog(DashboardActivity.this);
     }
 
-    private void scanWorkerQRCode() {
+    /*private void scanWorkerQRCode() {
         IntentIntegrator integrator = new IntentIntegrator(DashboardActivity.this);
         integrator.setPrompt("Align the QR code inside the box");
         integrator.setOrientationLocked(true);
         integrator.setBeepEnabled(false);
         integrator.initiateScan();
-    }
+    }*/
 
-    private void scanShopQRCode() {
+    private void scanQRCode() {
         Toast.makeText(this, "Scanning started", Toast.LENGTH_SHORT).show();
         IntentIntegrator integrator = new IntentIntegrator(DashboardActivity.this);
         integrator.setPrompt("Align the QR code inside the box");
@@ -120,9 +143,9 @@ public class DashboardActivity extends AppCompatActivity {
                 Log.i(AppConfig.APP_NAME, "This is shop's uid");
                 break;
             case AppConfig.WORKER_UID:
-                Log.i(AppConfig.APP_NAME, "This is worker's uid");
+                Log.i(AppConfig.APP_NAME, "This is worker's uid :: " + uid);
                 Intent intent = new Intent(DashboardActivity.this, WorkerDetailsActivity.class);
-                intent.putExtra("uuid", uid);
+                intent.putExtra(AppConfig.UID, uid);
                 startActivity(intent);
                 break;
             case 0:
@@ -139,14 +162,8 @@ public class DashboardActivity extends AppCompatActivity {
         Log.i(AppConfig.APP_NAME, "request code = " + requestCode);
         if (result != null) {
             if (result.getContents() != null) {
+                Log.i(AppConfig.APP_NAME, "uid inside onresult = " + result.getContents());
                 checkShopOrWorkerUID(result.getContents());
-                Log.i(AppConfig.APP_NAME, "Scanned :: " + result.getContents());
-                Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
-
-                /*Log.i(AppConfig.APP_NAME, "Worker UID scanned.");
-                Intent intent = new Intent(DashboardActivity.this, WorkerDetailsActivity.class);
-                intent.putExtra("uuid", result.getContents());
-                startActivity(intent);*/
 
             }
         } else {

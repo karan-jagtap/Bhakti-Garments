@@ -48,7 +48,7 @@ public class ProductAdapter extends ArrayAdapter<Product> {
             delete.setVisibility(View.GONE);
             name.setTextColor(Color.RED);
             name.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-            name.setText("¯\\_(ツ)_/¯ " + product.getName() + " ¯\\_(ツ)_/¯");
+            name.setText("¯\\_(ツ)_/¯  " + product.getName() + "  ¯\\_(ツ)_/¯");
         } else {
             name.setTextColor(activity.getColor(R.color.black));
         }

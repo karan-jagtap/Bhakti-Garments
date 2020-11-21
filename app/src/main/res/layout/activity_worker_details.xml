@@ -41,7 +41,7 @@
             android:textSize="15sp" />
 
         <EditText
-            android:id="@+id/editText_name_RegisterWorkerActivity"
+            android:id="@+id/editText_name_WorkerDetailsActivity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -66,7 +66,7 @@
             android:textSize="15sp" />
 
         <EditText
-            android:id="@+id/editText_contact_no_RegisterWorkerActivity"
+            android:id="@+id/editText_contact_no_WorkerDetailsActivity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -91,7 +91,7 @@
             android:textSize="15sp" />
 
         <EditText
-            android:id="@+id/editText_machine_no_RegisterWorkerActivity"
+            android:id="@+id/editText_machine_no_WorkerDetailsActivity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -102,6 +102,41 @@
             android:inputType="number"
             android:padding="8dp"
             android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/textView_message_WorkerDetailsActivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginBottom="10dp"
+            android:textAlignment="center"
+            android:textColor="@color/blue_medium"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:weightSum="2">
+
+            <Button
+                android:id="@+id/button_edit_WorkerDetailsActivity"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:layout_weight="1"
+                android:text="Edit" />
+
+            <Button
+                android:id="@+id/button_delete_WorkerDetailsActivity"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_weight="1"
+                android:backgroundTint="@android:color/holo_red_dark"
+                android:text="Delete" />
+        </LinearLayout>
 
     </LinearLayout>
 </LinearLayout>

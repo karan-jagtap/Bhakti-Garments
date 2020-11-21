@@ -151,6 +151,70 @@ public class LocalDatabase extends SQLiteOpenHelper {
         return response;
     }
 
+    // @context : EDIT WORKER
+    // @desc : Edit a worker
+    // @params : Worker.class
+    // @returns : ResponseHandler
+    public ResponseHandler editWorker(Worker worker) {
+        ResponseHandler response = new ResponseHandler();
+
+        // Insert new Worker
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(KEY_NAME, worker.getName());
+        cv.put(KEY_CONTACT_NO, worker.getContactNo());
+        cv.put(KEY_MACHINE_NO, worker.getMachineNo());
+        int rows = db.update(TABLE_WORKER, cv, KEY_UID + "= ?", new String[]{worker.getUid()});
+        cv.clear();
+        db.close();
+
+        if (rows == 1) {
+            response.setErrorCode(0);
+            return response;
+        }
+        response.setErrorCode(2);
+        return response;
+    }
+
+    // @context : GET SINGLE WORKER
+    // @desc : Retrieves a worker
+    // @params : String
+    // @returns : Worker
+    public Worker getWorkerByUid(String uid) {
+        SQLiteDatabase db = getReadableDatabase();
+        String selectQuery = "SELECT * FROM " + TABLE_WORKER + " WHERE " + KEY_UID + " = '" + uid + "';";
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        Worker worker = new Worker();
+        Log.i(AppConfig.APP_NAME, "cursor count = " + cursor.getCount());
+        if (cursor.getCount() > 0) {
+            worker.setUid(uid);
+            worker.setName(cursor.getString(2));
+            worker.setContactNo(cursor.getString(3));
+            worker.setMachineNo(cursor.getString(4));
+        } else {
+            worker = null;
+        }
+        cursor.close();
+        db.close();
+        return worker;
+    }
+
+    // @context : DELETE WORKER
+    // @desc : Deletes a worker
+    // @params : String
+    // @returns : ResponseHandler
+    public ResponseHandler deleteWorker(String uid) {
+        ResponseHandler response = new ResponseHandler();
+        SQLiteDatabase db = getWritableDatabase();
+        int deleted = db.delete(TABLE_WORKER, KEY_UID + "= ?", new String[]{uid});
+        if (deleted == 1) {
+            response.setErrorCode(0);
+            return response;
+        }
+        response.setErrorCode(2);
+        return response;
+    }
+
     // @context : ADD PRODUCT
     // @desc : Adds a new Product
     // @params : Product.class
@@ -242,7 +306,6 @@ public class LocalDatabase extends SQLiteOpenHelper {
         return response;
     }
 
-
     // START :: UTILITIES
 
     // @desc : Checks if shop is present
@@ -265,6 +328,7 @@ public class LocalDatabase extends SQLiteOpenHelper {
         db.close();
         return false;
     }
+
 
     public int checkUid(String uid) {
         SQLiteDatabase db = getReadableDatabase();

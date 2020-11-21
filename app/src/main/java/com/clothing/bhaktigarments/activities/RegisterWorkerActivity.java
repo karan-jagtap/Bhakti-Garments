@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -27,6 +28,7 @@ import com.clothing.bhaktigarments.R;
 import com.clothing.bhaktigarments.classes.Worker;
 import com.clothing.bhaktigarments.config.AppConfig;
 import com.clothing.bhaktigarments.helpers.LocalDatabase;
+import com.clothing.bhaktigarments.helpers.MessageDialog;
 import com.clothing.bhaktigarments.helpers.ResponseHandler;
 import com.google.zxing.BarcodeFormat;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
@@ -52,6 +54,9 @@ public class RegisterWorkerActivity extends AppCompatActivity implements EasyPer
     private Worker worker;
     private boolean permissionGranted = false;
 
+    // helpers
+    private MessageDialog dialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,7 +77,7 @@ public class RegisterWorkerActivity extends AppCompatActivity implements EasyPer
                 if (checkData()) {
                     getPermission();
                     try {
-                        InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+                        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
                     } catch (Exception e) {
                         // TODO: handle exception
@@ -90,6 +95,8 @@ public class RegisterWorkerActivity extends AppCompatActivity implements EasyPer
         imageView = findViewById(R.id.imageView_RegisterWorkerActivity);
         imageNameTV = findViewById(R.id.textView_imageName_RegisterWorkerActivity);
         messageTV = findViewById(R.id.textView_message_RegisterWorkerActivity);
+
+        dialog = new MessageDialog(RegisterWorkerActivity.this);
     }
 
     private boolean checkData() {
@@ -266,7 +273,7 @@ public class RegisterWorkerActivity extends AppCompatActivity implements EasyPer
 
     private void checkBuildVersion() {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
-            //dialog.showMessage("This feature is not supported for Android 11 ie. Android R by the Developer of this application.\nContact Developer for further details.");
+            dialog.showMessage("This feature is not supported for Android 11 ie. Android R by the Developer of this application.\nContact Developer for further details.");
         } else {
             generateQRCode();
         }
