@@ -1,7 +1,6 @@
 package com.clothing.bhaktigarments.activities;
 
 import android.Manifest;
-import android.content.ContentValues;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.MediaScannerConnection;
@@ -9,7 +8,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -17,10 +15,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -35,7 +31,6 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.util.List;
 import java.util.UUID;
 
@@ -66,7 +61,6 @@ public class RegisterShopActivity extends AppCompatActivity implements EasyPermi
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
 
-        Log.i(AppConfig.APP_NAME, "" + Environment.getExternalStorageDirectory().toString());
         declarations();
         listeners();
     }
@@ -91,7 +85,8 @@ public class RegisterShopActivity extends AppCompatActivity implements EasyPermi
                     shop.setUid(UUID.randomUUID().toString());
                     getPermission();
                     try {
-                        InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+                        permissionGranted = false;
+                        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
                     } catch (Exception e) {
                         // TODO: handle exception
@@ -111,7 +106,7 @@ public class RegisterShopActivity extends AppCompatActivity implements EasyPermi
             imageView.setImageBitmap(bitmap);
             Log.i(AppConfig.APP_NAME, "Current Build version :: " + Build.VERSION.SDK_INT);
 
-            String appDirectoryPath = Environment.getExternalStorageDirectory().toString() +  "/Bhakti Garments";
+            String appDirectoryPath = Environment.getExternalStorageDirectory().toString() + "/Bhakti Garments";
             File appDirectory = new File(appDirectoryPath);
             if (!appDirectory.exists()) {
                 if (appDirectory.mkdir()) {
@@ -207,7 +202,6 @@ public class RegisterShopActivity extends AppCompatActivity implements EasyPermi
         }
     }
 
-    @AfterPermissionGranted(29)
     private void getPermission() {
         String[] perms = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
         if (EasyPermissions.hasPermissions(this, perms)) {
@@ -218,7 +212,7 @@ public class RegisterShopActivity extends AppCompatActivity implements EasyPermi
             }
         } else {
             // Do not have permissions, request them now
-            EasyPermissions.requestPermissions(this, "This is this",
+            EasyPermissions.requestPermissions(this, "Please allow storage permission to save the QR Code image.",
                     29, perms);
         }
     }
@@ -237,6 +231,7 @@ public class RegisterShopActivity extends AppCompatActivity implements EasyPermi
 
     @Override
     public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
-        Toast.makeText(this, "Cannot Save QR Code", Toast.LENGTH_SHORT).show();
+        dialog.showMessage("The Generated QR Code cannot be saved on phone storage due to " +
+                "lack of permission.\nPlease give permission to use this feature.");
     }
 }

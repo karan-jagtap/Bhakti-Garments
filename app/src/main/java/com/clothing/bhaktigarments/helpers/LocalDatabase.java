@@ -158,7 +158,7 @@ public class LocalDatabase extends SQLiteOpenHelper {
     public ResponseHandler editWorker(Worker worker) {
         ResponseHandler response = new ResponseHandler();
 
-        // Insert new Worker
+        // Edit Worker
         SQLiteDatabase db = getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(KEY_NAME, worker.getName());
@@ -185,9 +185,12 @@ public class LocalDatabase extends SQLiteOpenHelper {
         String selectQuery = "SELECT * FROM " + TABLE_WORKER + " WHERE " + KEY_UID + " = '" + uid + "';";
         Cursor cursor = db.rawQuery(selectQuery, null);
         Worker worker = new Worker();
+        Log.i(AppConfig.APP_NAME, "query = " + selectQuery);
         Log.i(AppConfig.APP_NAME, "cursor count = " + cursor.getCount());
-        if (cursor.getCount() > 0) {
+        if (cursor.getCount() == 1) {
+            cursor.moveToFirst();
             worker.setUid(uid);
+            Log.i(AppConfig.APP_NAME,"2 = "+cursor.getInt(0));
             worker.setName(cursor.getString(2));
             worker.setContactNo(cursor.getString(3));
             worker.setMachineNo(cursor.getString(4));

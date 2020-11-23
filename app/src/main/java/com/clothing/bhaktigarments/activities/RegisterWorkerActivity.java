@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Message;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -20,7 +19,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -77,6 +75,7 @@ public class RegisterWorkerActivity extends AppCompatActivity implements EasyPer
                 if (checkData()) {
                     getPermission();
                     try {
+                        permissionGranted = false;
                         InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
                     } catch (Exception e) {
@@ -290,7 +289,7 @@ public class RegisterWorkerActivity extends AppCompatActivity implements EasyPer
             }
         } else {
             // Do not have permissions, request them now
-            EasyPermissions.requestPermissions(this, "This is this",
+            EasyPermissions.requestPermissions(this, "Please allow storage permission to save the QR Code image.",
                     29, perms);
         }
     }

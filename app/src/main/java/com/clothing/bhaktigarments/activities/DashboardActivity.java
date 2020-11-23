@@ -86,10 +86,7 @@ public class DashboardActivity extends AppCompatActivity {
         detailsWorkerL.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(DashboardActivity.this, WorkerDetailsActivity.class);
-                i.putExtra("uid","1");
-                startActivity(i);
-                //scanQRCode();
+                scanQRCode();
             }
         });
 
@@ -119,14 +116,6 @@ public class DashboardActivity extends AppCompatActivity {
         db = new LocalDatabase(DashboardActivity.this);
         dialog = new MessageDialog(DashboardActivity.this);
     }
-
-    /*private void scanWorkerQRCode() {
-        IntentIntegrator integrator = new IntentIntegrator(DashboardActivity.this);
-        integrator.setPrompt("Align the QR code inside the box");
-        integrator.setOrientationLocked(true);
-        integrator.setBeepEnabled(false);
-        integrator.initiateScan();
-    }*/
 
     private void scanQRCode() {
         Toast.makeText(this, "Scanning started", Toast.LENGTH_SHORT).show();

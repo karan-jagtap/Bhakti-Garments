@@ -1,27 +1,26 @@
 package com.clothing.bhaktigarments.activities;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.clothing.bhaktigarments.R;
-import com.clothing.bhaktigarments.classes.Product;
 import com.clothing.bhaktigarments.classes.Worker;
 import com.clothing.bhaktigarments.config.AppConfig;
 import com.clothing.bhaktigarments.helpers.LocalDatabase;
 import com.clothing.bhaktigarments.helpers.ResponseHandler;
 
-import java.util.UUID;
+import java.io.File;
 
 public class WorkerDetailsActivity extends AppCompatActivity {
 
@@ -36,6 +35,7 @@ public class WorkerDetailsActivity extends AppCompatActivity {
 
     // helpers
     private LocalDatabase db;
+    private ResponseHandler response;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +69,8 @@ public class WorkerDetailsActivity extends AppCompatActivity {
     }
 
     private void editWorkerDetails() {
-        ResponseHandler response = db.editWorker(worker);
+        response = db.editWorker(worker);
+        Log.i(AppConfig.APP_NAME, "After edit response code = " + response.getErrorCode());
         if (response.getErrorCode() == 0) {
             showSuccessComponents("Worker Edited");
         } else {
@@ -77,12 +78,17 @@ public class WorkerDetailsActivity extends AppCompatActivity {
         }
     }
 
-
     private void declarations() {
-        if (uid != null) {
-            uid = getIntent().getStringExtra(AppConfig.UID);
-        }
+        try {
+            String receivedUid = getIntent().getStringExtra(AppConfig.UID);
+            if (uid == null) {
+                uid = receivedUid;
+            } else if (!uid.equals(receivedUid)) {
+                uid = receivedUid;
+            }
+        } catch (Exception ignore) {
 
+        }
         nameED = findViewById(R.id.editText_name_WorkerDetailsActivity);
         contactED = findViewById(R.id.editText_contact_no_WorkerDetailsActivity);
         machineNoED = findViewById(R.id.editText_machine_no_WorkerDetailsActivity);
@@ -94,6 +100,7 @@ public class WorkerDetailsActivity extends AppCompatActivity {
         messageTV = findViewById(R.id.textView_message_WorkerDetailsActivity);
         worker = db.getWorkerByUid(uid);
         if (worker != null) {
+            Log.i(AppConfig.APP_NAME, "worker is not null");
             loadUIComponents();
         }
     }
@@ -105,7 +112,6 @@ public class WorkerDetailsActivity extends AppCompatActivity {
     }
 
     private boolean checkData() {
-        // worker = new Worker();
         if (nameED.getText().toString().trim().isEmpty()) {
             showErrorComponents("Please Enter Name");
             return false;
@@ -122,7 +128,6 @@ public class WorkerDetailsActivity extends AppCompatActivity {
             showErrorComponents("Please Enter Machine No.");
             return false;
         }
-        // worker.setUid(UUID.randomUUID().toString());
         worker.setName(nameED.getText().toString().trim());
         worker.setContactNo(contactED.getText().toString().trim());
         worker.setMachineNo(machineNoED.getText().toString().trim());
@@ -131,11 +136,13 @@ public class WorkerDetailsActivity extends AppCompatActivity {
 
     private void showErrorComponents(String message) {
         messageTV.setText(message);
+        messageTV.setVisibility(View.VISIBLE);
         messageTV.setTextColor(Color.RED);
     }
 
     private void showSuccessComponents(String message) {
         messageTV.setText(message);
+        messageTV.setVisibility(View.VISIBLE);
         messageTV.setTextColor(getColor(R.color.blue_medium));
     }
 
@@ -143,7 +150,7 @@ public class WorkerDetailsActivity extends AppCompatActivity {
         AlertDialog alertDialog = new AlertDialog.Builder(WorkerDetailsActivity.this).create();
         alertDialog.setTitle("Warning");
         alertDialog.setCancelable(true);
-        alertDialog.setMessage("Are you sure to delete it?");
+        alertDialog.setMessage("The QR Code image of this Worker will also be deleted.\nAre you sure to delete it?");
         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NO", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -153,10 +160,34 @@ public class WorkerDetailsActivity extends AppCompatActivity {
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "YES", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                db.deleteWorker(worker.getUid());
+                response = db.deleteWorker(worker.getUid());
+                if (response.getErrorCode() == 0) {
+                    deleteImage();
+                }
             }
         });
         alertDialog.show();
     }
 
+    private void deleteImage() {
+        try {
+            String appDirectoryPath = Environment.getExternalStorageDirectory().toString() +
+                    "/Bhakti Garments/Workers/" + worker.getUid() + ".png";
+            File appDirectory = new File(appDirectoryPath);
+            if (!appDirectory.exists()) {
+                showErrorComponents("Cannot locate the image at location : " + appDirectoryPath +
+                        "\nPlease delete the image with name " + worker.getUid() + ".png manually.");
+            } else {
+                if (appDirectory.delete()) {
+                    showSuccessComponents("Worker Deleted.");
+                    finish();
+                } else {
+                    showErrorComponents("Cannot Delete Worker. Make sure you have allowed all " +
+                            "permissions and the QR Code is present in the phone storage.");
+                }
+            }
+        } catch (Exception e) {
+
+        }
+    }
 }
