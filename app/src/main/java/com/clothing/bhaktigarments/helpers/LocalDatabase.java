@@ -37,6 +37,12 @@ public class LocalDatabase extends SQLiteOpenHelper {
     private static final String KEY_MACHINE_NO = "machine_no";
     private static final String TABLE_WORKER = "worker";
 
+    // Shop Products : Constants
+    private static final String KEY_SHOP_UID = "shop_uid";
+    private static final String KEY_PRODUCT_UID = "product_uid";
+    private static final String TABLE_SHOP_PRODUCT = "shop_product";
+
+
     // Shop : TABLE
     // Query : create table shop (id integer not null primary key autoincrement, uid text, name text);
     private static final String CREATE_TABLE_SHOP =
@@ -67,6 +73,15 @@ public class LocalDatabase extends SQLiteOpenHelper {
                     KEY_MACHINE_NO + " TEXT " +
                     ");";
 
+    // Worker : TABLE
+    // Query : create table shop_product (id integer not null primary key autoincrement, shop_uid text, product_uid text);
+    private static final String CREATE_TABLE_SHOP_PRODUCT =
+            "CREATE TABLE " + TABLE_SHOP_PRODUCT + " (" +
+                    KEY_ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+                    KEY_SHOP_UID + " TEXT, " +
+                    KEY_PRODUCT_UID + " TEXT " +
+                    ");";
+
     // variables
     private Context context;
 
@@ -80,12 +95,17 @@ public class LocalDatabase extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_SHOP);
         db.execSQL(CREATE_TABLE_PRODUCT);
         db.execSQL(CREATE_TABLE_WORKER);
+        db.execSQL(CREATE_TABLE_SHOP_PRODUCT);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         onCreate(db);
     }
+
+    /**
+     * SHOP :: START
+     **/
 
     // @context : REGISTER SHOP
     // @desc : Registers a new shop
@@ -117,6 +137,78 @@ public class LocalDatabase extends SQLiteOpenHelper {
         response.setErrorCode(2);
         return response;
     }
+
+    // @context : EDIT SHOP
+    // @desc : Edit a shop
+    // @params : Shop.class
+    // @returns : ResponseHandler
+    public ResponseHandler editShop(Shop shop) {
+        ResponseHandler response = new ResponseHandler();
+
+        // Edit Worker
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(KEY_NAME, shop.getName());
+        int rows = db.update(TABLE_SHOP, cv, KEY_UID + "= ?", new String[]{shop.getUid()});
+        cv.clear();
+        db.close();
+
+        if (rows == 1) {
+            response.setErrorCode(0);
+            return response;
+        }
+        response.setErrorCode(2);
+        return response;
+    }
+
+    // @context : GET SINGLE SHOP
+    // @desc : Retrieves a Shop
+    // @params : String
+    // @returns : Shop
+    public Shop getShopByUid(String uid) {
+        SQLiteDatabase db = getReadableDatabase();
+        String selectQuery = "SELECT * FROM " + TABLE_SHOP + " WHERE " + KEY_UID + " = '" + uid + "';";
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        Shop shop = new Shop();
+        Log.i(AppConfig.APP_NAME, "query = " + selectQuery);
+        Log.i(AppConfig.APP_NAME, "cursor count = " + cursor.getCount());
+        if (cursor.getCount() == 1) {
+            cursor.moveToFirst();
+            shop.setUid(uid);
+            Log.i(AppConfig.APP_NAME, "2 = " + cursor.getInt(0));
+            shop.setName(cursor.getString(2));
+        } else {
+            shop = null;
+        }
+        cursor.close();
+        db.close();
+        return shop;
+    }
+
+    // @context : DELETE SHOP
+    // @desc : Deletes a shop
+    // @params : String
+    // @returns : ResponseHandler
+    public ResponseHandler deleteShop(String uid) {
+        ResponseHandler response = new ResponseHandler();
+        SQLiteDatabase db = getWritableDatabase();
+        int deleted = db.delete(TABLE_SHOP, KEY_UID + "= ?", new String[]{uid});
+        if (deleted == 1) {
+            response.setErrorCode(0);
+            return response;
+        }
+        response.setErrorCode(2);
+        return response;
+    }
+
+    /**
+     * SHOP :: END
+     * **/
+
+
+    /**
+     * WORKER :: START
+     **/
 
     // @context : REGISTER WORKER
     // @desc : Registers a new worker
@@ -190,7 +282,7 @@ public class LocalDatabase extends SQLiteOpenHelper {
         if (cursor.getCount() == 1) {
             cursor.moveToFirst();
             worker.setUid(uid);
-            Log.i(AppConfig.APP_NAME,"2 = "+cursor.getInt(0));
+            Log.i(AppConfig.APP_NAME, "2 = " + cursor.getInt(0));
             worker.setName(cursor.getString(2));
             worker.setContactNo(cursor.getString(3));
             worker.setMachineNo(cursor.getString(4));
@@ -217,6 +309,15 @@ public class LocalDatabase extends SQLiteOpenHelper {
         response.setErrorCode(2);
         return response;
     }
+
+    /**
+     * WORKER :: END
+     **/
+
+
+    /**
+     * PRODUCT :: START
+     **/
 
     // @context : ADD PRODUCT
     // @desc : Adds a new Product
@@ -309,7 +410,100 @@ public class LocalDatabase extends SQLiteOpenHelper {
         return response;
     }
 
-    // START :: UTILITIES
+    /**
+     * PRODUCT :: END
+     * **/
+
+
+    /**
+     * SHOP_PRODUCT :: START
+     **/
+
+    public ResponseHandler getAllSelectedProductsOfShopUid(String uid) {
+        ResponseHandler response = new ResponseHandler();
+        ArrayList<Product> arrayList = new ArrayList<>();
+
+        // get all selected records
+        String selectQuery = "SELECT " +
+                TABLE_PRODUCT + "." + KEY_UID + ", " +
+                TABLE_PRODUCT + "." + KEY_SERIAL_NO + ", " +
+                TABLE_PRODUCT + "." + KEY_NAME +
+                " FROM " + TABLE_PRODUCT + ", " + TABLE_SHOP_PRODUCT +
+                " WHERE " +
+                TABLE_SHOP_PRODUCT + "." + KEY_SHOP_UID + " = '" + uid + "' AND " +
+                TABLE_SHOP_PRODUCT + "." + KEY_PRODUCT_UID + " = " + TABLE_PRODUCT + "." + KEY_UID +
+                ";";
+        Log.i(AppConfig.APP_NAME, "nice query = " + selectQuery);
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        if (cursor.getCount() > 0) {
+            while (cursor.moveToNext()) {
+                Product product = new Product();
+                product.setUid(cursor.getString(0));
+                product.setSerialNo(cursor.getString(1));
+                product.setName(cursor.getString(2));
+                arrayList.add(product);
+            }
+            response.setErrorCode(0);
+            response.setProductArrayList(arrayList);
+            return response;
+        }
+        response.setErrorCode(3);
+        Product product = new Product();
+        product.setName("No Products added yet");
+        arrayList.clear();
+        arrayList.add(product);
+        response.setProductArrayList(arrayList);
+        cursor.close();
+        db.close();
+        return response;
+    }
+
+    // @context : ADD PRODUCT TO SHOP
+    // @desc : Adds a product to a shop (linking)
+    // @params : String, String
+    // @returns : ResponseHandler
+    public ResponseHandler addProductToShop(String productUid, String shopUid) {
+        ResponseHandler response = new ResponseHandler();
+
+        // Insert new Product
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(KEY_PRODUCT_UID, productUid);
+        cv.put(KEY_SHOP_UID, shopUid);
+        db.insert(TABLE_SHOP_PRODUCT, null, cv);
+        cv.clear();
+        db.close();
+
+        response.setErrorCode(0);
+        return response;
+    }
+
+    // @context : DELETE PRODUCT FROM SHOP
+    // @desc : Deletes a Product from a specific shop
+    // @params : String, String
+    // @returns : ResponseHandler
+    public ResponseHandler deleteProductFromShop(String productUid, String shopUid) {
+        ResponseHandler response = new ResponseHandler();
+        SQLiteDatabase db = getWritableDatabase();
+        int deleted = db.delete(TABLE_SHOP_PRODUCT, KEY_PRODUCT_UID + "= ? AND " +
+                KEY_SHOP_UID + "= ?", new String[]{productUid, shopUid});
+        if (deleted == 1) {
+            response.setErrorCode(0);
+            return response;
+        }
+        response.setErrorCode(2);
+        return response;
+    }
+
+    /**
+     * SHOP_PRODUCT :: END
+     * **/
+
+
+    /**
+     * UTILITIES :: START
+     **/
 
     // @desc : Checks if shop is present
     // @params : String
@@ -352,5 +546,7 @@ public class LocalDatabase extends SQLiteOpenHelper {
         return 0;
     }
 
-    // END :: UTILITIES
+    /**
+     * UTILITIES :: END
+     * **/
 }

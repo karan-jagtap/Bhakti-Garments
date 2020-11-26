@@ -86,7 +86,7 @@ public class DashboardActivity extends AppCompatActivity {
         detailsWorkerL.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                scanQRCode();
+                //scanQRCode();
             }
         });
 
@@ -130,12 +130,15 @@ public class DashboardActivity extends AppCompatActivity {
         switch (db.checkUid(uid)) {
             case AppConfig.SHOP_UID:
                 Log.i(AppConfig.APP_NAME, "This is shop's uid");
+                Intent shopI = new Intent(DashboardActivity.this, ShopDetailsActivity.class);
+                shopI.putExtra(AppConfig.UID, uid);
+                startActivity(shopI);
                 break;
             case AppConfig.WORKER_UID:
                 Log.i(AppConfig.APP_NAME, "This is worker's uid :: " + uid);
-                Intent intent = new Intent(DashboardActivity.this, WorkerDetailsActivity.class);
-                intent.putExtra(AppConfig.UID, uid);
-                startActivity(intent);
+                Intent workerI = new Intent(DashboardActivity.this, WorkerDetailsActivity.class);
+                workerI.putExtra(AppConfig.UID, uid);
+                startActivity(workerI);
                 break;
             case 0:
                 Log.i(AppConfig.APP_NAME, "This is not useful uid anymore.");

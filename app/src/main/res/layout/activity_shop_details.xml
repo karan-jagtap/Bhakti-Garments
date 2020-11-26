@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/blue_dark"
     android:orientation="vertical"
-    tools:context=".activities.WorkerDetailsActivity">
+    tools:context=".activities.ShopDetailsActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -14,7 +14,7 @@
         android:theme="@style/Theme.BhaktiGarments.AppBarOverlay">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar_WorkerDetailsActivity"
+            android:id="@+id/toolbar_ShopDetailsActivity"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
@@ -41,7 +41,7 @@
             android:textSize="15sp" />
 
         <EditText
-            android:id="@+id/editText_name_WorkerDetailsActivity"
+            android:id="@+id/editText_name_ShopDetailsActivity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -49,62 +49,13 @@
             android:layout_marginBottom="16dp"
             android:background="@drawable/drawable_outline_blue"
             android:fontFamily="@font/amiko_regular"
-            android:hint="eg. John Doe"
+            android:hint="eg. Blackberry"
             android:inputType="textPersonName|textCapWords"
             android:padding="8dp"
             android:textSize="16sp" />
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:fontFamily="@font/amiko_regular"
-            android:letterSpacing="0"
-            android:text="Enter Contact No. :"
-            android:textColor="@android:color/black"
-            android:textSize="15sp" />
-
-        <EditText
-            android:id="@+id/editText_contact_no_WorkerDetailsActivity"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            android:background="@drawable/drawable_outline_blue"
-            android:fontFamily="@font/amiko_regular"
-            android:hint="eg. 9876543210"
-            android:inputType="phone"
-            android:padding="8dp"
-            android:textSize="16sp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:fontFamily="@font/amiko_regular"
-            android:letterSpacing="0"
-            android:text="Enter Machine No. :"
-            android:textColor="@android:color/black"
-            android:textSize="15sp" />
-
-        <EditText
-            android:id="@+id/editText_machine_no_WorkerDetailsActivity"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            android:background="@drawable/drawable_outline_blue"
-            android:fontFamily="@font/amiko_regular"
-            android:inputType="number"
-            android:padding="8dp"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/textView_message_WorkerDetailsActivity"
+            android:id="@+id/textView_message_ShopDetailsActivity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
@@ -121,7 +72,7 @@
             android:weightSum="2">
 
             <Button
-                android:id="@+id/button_edit_WorkerDetailsActivity"
+                android:id="@+id/button_edit_ShopDetailsActivity"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="5dp"
@@ -129,7 +80,7 @@
                 android:text="Edit" />
 
             <Button
-                android:id="@+id/button_delete_WorkerDetailsActivity"
+                android:id="@+id/button_delete_ShopDetailsActivity"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
@@ -138,13 +89,29 @@
                 android:text="Delete" />
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="10dp"
+            android:background="@color/blue_medium" />
+
         <Button
-            android:id="@+id/button_completed_products_WorkerDetailsActivity"
+            android:id="@+id/button_add_products_ShopDetailsActivity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:drawableEnd="@drawable/ic_white_arrow_right_24dp"
-            android:text="Completed Products" />
+            android:text="Add | Remove Products" />
 
+        <Button
+            android:id="@+id/button_view_products_ShopDetailsActivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:drawableEnd="@drawable/ic_white_arrow_right_24dp"
+            android:text="View Workers" />
     </LinearLayout>
+
 </LinearLayout>

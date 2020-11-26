@@ -5,34 +5,36 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.clothing.bhaktigarments.R;
-import com.clothing.bhaktigarments.classes.Worker;
+import com.clothing.bhaktigarments.classes.Shop;
 import com.clothing.bhaktigarments.config.AppConfig;
 import com.clothing.bhaktigarments.helpers.LocalDatabase;
 import com.clothing.bhaktigarments.helpers.ResponseHandler;
 
 import java.io.File;
 
-public class WorkerDetailsActivity extends AppCompatActivity {
+public class ShopDetailsActivity extends AppCompatActivity {
 
     // components
-    private EditText nameED, machineNoED, contactED;
-    private Button editBtn, delBtn, completedProductsBtn;
+    private EditText nameED;
+    private Button editBtn, delBtn, addProdBtn;
     private TextView messageTV;
 
     // data
     private static String uid;
-    private Worker worker;
+    private Shop shop;
 
     // helpers
     private LocalDatabase db;
@@ -41,14 +43,12 @@ public class WorkerDetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_worker_details);
-        Toolbar toolbar = findViewById(R.id.toolbar_WorkerDetailsActivity);
+        setContentView(R.layout.activity_shop_details);
+        Toolbar toolbar = findViewById(R.id.toolbar_ShopDetailsActivity);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
 
-        declarations();
-        listeners();
     }
 
     private void listeners() {
@@ -68,21 +68,21 @@ public class WorkerDetailsActivity extends AppCompatActivity {
             }
         });
 
-        completedProductsBtn.setOnClickListener(new View.OnClickListener() {
+        addProdBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(WorkerDetailsActivity.this, WorkerCompletedProductsActivity.class);
-                intent.putExtra(AppConfig.UID, uid);
-                startActivity(intent);
+                Intent i = new Intent(ShopDetailsActivity.this, AddProductsToShopActivity.class);
+                i.putExtra(AppConfig.UID, uid);
+                startActivity(i);
             }
         });
     }
 
     private void editWorkerDetails() {
-        response = db.editWorker(worker);
+        response = db.editShop(shop);
         Log.i(AppConfig.APP_NAME, "After edit response code = " + response.getErrorCode());
         if (response.getErrorCode() == 0) {
-            showSuccessComponents("Worker Edited");
+            showSuccessComponents("Shop Edited");
         } else {
             showErrorComponents(response.getErrorMessage(2));
         }
@@ -92,34 +92,40 @@ public class WorkerDetailsActivity extends AppCompatActivity {
         try {
             String receivedUid = getIntent().getStringExtra(AppConfig.UID);
             if (uid == null) {
+                Log.i(AppConfig.APP_NAME, "uid is NULL");
                 uid = receivedUid;
-            } else if (!uid.equals(receivedUid)) {
+            } else if (!uid.equals(receivedUid) && receivedUid != null) {
+                Log.i(AppConfig.APP_NAME, "uid does not equal - "+receivedUid);
                 uid = receivedUid;
             }
         } catch (Exception ignore) {
-
         }
-        nameED = findViewById(R.id.editText_name_WorkerDetailsActivity);
-        contactED = findViewById(R.id.editText_contact_no_WorkerDetailsActivity);
-        machineNoED = findViewById(R.id.editText_machine_no_WorkerDetailsActivity);
-        messageTV = findViewById(R.id.textView_message_WorkerDetailsActivity);
-        editBtn = findViewById(R.id.button_edit_WorkerDetailsActivity);
-        delBtn = findViewById(R.id.button_delete_WorkerDetailsActivity);
-        completedProductsBtn = findViewById(R.id.button_completed_products_WorkerDetailsActivity);
+        nameED = findViewById(R.id.editText_name_ShopDetailsActivity);
+        messageTV = findViewById(R.id.textView_message_ShopDetailsActivity);
+        editBtn = findViewById(R.id.button_edit_ShopDetailsActivity);
+        delBtn = findViewById(R.id.button_delete_ShopDetailsActivity);
+        addProdBtn = findViewById(R.id.button_add_products_ShopDetailsActivity);
 
-        db = new LocalDatabase(WorkerDetailsActivity.this);
-        messageTV = findViewById(R.id.textView_message_WorkerDetailsActivity);
-        worker = db.getWorkerByUid(uid);
-        if (worker != null) {
-            Log.i(AppConfig.APP_NAME, "worker is not null");
+        db = new LocalDatabase(ShopDetailsActivity.this);
+        messageTV = findViewById(R.id.textView_message_ShopDetailsActivity);
+        shop = db.getShopByUid(uid);
+        if (shop != null) {
+            Log.i(AppConfig.APP_NAME, "shop is not null");
             loadUIComponents();
         }
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.i(AppConfig.APP_NAME, "onStart");
+
+        declarations();
+        listeners();
+    }
+
     private void loadUIComponents() {
-        nameED.setText(worker.getName());
-        contactED.setText(worker.getContactNo());
-        machineNoED.setText(worker.getMachineNo());
+        nameED.setText(shop.getName());
     }
 
     private boolean checkData() {
@@ -127,21 +133,7 @@ public class WorkerDetailsActivity extends AppCompatActivity {
             showErrorComponents("Please Enter Name");
             return false;
         }
-        if (contactED.getText().toString().trim().isEmpty()) {
-            showErrorComponents("Please Enter Contact No.");
-            return false;
-        }
-        if (contactED.getText().toString().length() != 10) {
-            showErrorComponents("Please Enter Valid Contact No. upto 10 digits");
-            return false;
-        }
-        if (machineNoED.getText().toString().trim().isEmpty()) {
-            showErrorComponents("Please Enter Machine No.");
-            return false;
-        }
-        worker.setName(nameED.getText().toString().trim());
-        worker.setContactNo(contactED.getText().toString().trim());
-        worker.setMachineNo(machineNoED.getText().toString().trim());
+        shop.setName(nameED.getText().toString().trim());
         return true;
     }
 
@@ -158,10 +150,10 @@ public class WorkerDetailsActivity extends AppCompatActivity {
     }
 
     private void showDialog() {
-        AlertDialog alertDialog = new AlertDialog.Builder(WorkerDetailsActivity.this).create();
+        AlertDialog alertDialog = new AlertDialog.Builder(ShopDetailsActivity.this).create();
         alertDialog.setTitle("Warning");
         alertDialog.setCancelable(true);
-        alertDialog.setMessage("The QR Code image of this Worker will also be deleted.\nAre you sure to delete it?");
+        alertDialog.setMessage("The QR Code image of this Shop will also be deleted.\nAre you sure to delete it?");
         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NO", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -171,7 +163,7 @@ public class WorkerDetailsActivity extends AppCompatActivity {
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "YES", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                response = db.deleteWorker(worker.getUid());
+                response = db.deleteShop(shop.getUid());
                 if (response.getErrorCode() == 0) {
                     deleteImage();
                 }
@@ -183,22 +175,34 @@ public class WorkerDetailsActivity extends AppCompatActivity {
     private void deleteImage() {
         try {
             String appDirectoryPath = Environment.getExternalStorageDirectory().toString() +
-                    "/Bhakti Garments/Workers/" + worker.getUid() + ".png";
+                    "/Bhakti Garments/Shops/" + shop.getUid() + ".png";
             File appDirectory = new File(appDirectoryPath);
             if (!appDirectory.exists()) {
                 showErrorComponents("Cannot locate the image at location : " + appDirectoryPath +
-                        "\nPlease delete the image with name " + worker.getUid() + ".png manually.");
+                        "\nPlease delete the image with name " + shop.getUid() + ".png manually.");
             } else {
                 if (appDirectory.delete()) {
-                    showSuccessComponents("Worker Deleted.");
+                    showSuccessComponents("Shop Deleted.");
                     finish();
                 } else {
-                    showErrorComponents("Cannot Delete Worker. Make sure you have allowed all " +
+                    showErrorComponents("Cannot Delete Shop. Make sure you have allowed all " +
                             "permissions and the QR Code is present in the phone storage.");
                 }
             }
         } catch (Exception e) {
 
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(AppConfig.UID, uid);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        uid = savedInstanceState.getString(AppConfig.UID);
     }
 }

@@ -97,7 +97,8 @@ public class ProductsActivity extends AppCompatActivity {
     private void loadProductList() {
         Log.i(AppConfig.APP_NAME, "loadProductList()");
         productArrayList = db.getAllProducts().getProductArrayList();
-        ProductAdapter adapter = new ProductAdapter(ProductsActivity.this, productArrayList);
+        ProductAdapter adapter = new ProductAdapter(ProductsActivity.this,
+                productArrayList, AppConfig.PRODUCT_ACTIVITY, null);
         listView.setAdapter(adapter);
     }
 

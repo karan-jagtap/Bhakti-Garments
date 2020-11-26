@@ -14,7 +14,7 @@
         <!--Background Color-->
         <item name="backgroundColor">@color/blue_dark</item>
         <!-- Toolbar -->
-        <item name="homeAsUpIndicator">@drawable/ic_back_arrow_24dp</item>
+        <item name="homeAsUpIndicator">@drawable/ic_white_arrow_left_24dp</item>
     </style>
 
 

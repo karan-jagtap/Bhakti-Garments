@@ -16,6 +16,32 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.BhaktiGarments">
+        <activity android:name=".activities.AddProductsToShopActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/add_products"
+            android:parentActivityName=".activities.ShopDetailsActivity"
+            android:screenOrientation="portrait"
+            android:stateNotNeeded="true"
+            android:theme="@style/Theme.BhaktiGarments.NoActionBar"
+            tools:replace="android:screenOrientation" />
+        <activity
+            android:name=".activities.ShopDetailsActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/shop_details"
+            android:parentActivityName=".activities.DashboardActivity"
+            android:screenOrientation="portrait"
+            android:stateNotNeeded="true"
+            android:theme="@style/Theme.BhaktiGarments.NoActionBar"
+            tools:replace="android:screenOrientation" />
+        <activity
+            android:name=".activities.WorkerCompletedProductsActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/completed_products"
+            android:parentActivityName=".activities.WorkerDetailsActivity"
+            android:screenOrientation="portrait"
+            android:stateNotNeeded="true"
+            android:theme="@style/Theme.BhaktiGarments.NoActionBar"
+            tools:replace="android:screenOrientation" />
         <activity
             android:name=".activities.WorkerDetailsActivity"
             android:configChanges="orientation|keyboardHidden"

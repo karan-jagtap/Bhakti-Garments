@@ -14,4 +14,7 @@
     <string name="title_activity_products">Products</string>
     <string name="title_activity_worker">Register Worker</string>
     <string name="worker_details">Worker Details</string>
+    <string name="completed_products">Completed Products</string>
+    <string name="shop_details">Shop Details</string>
+    <string name="add_products">Add Products</string>
 </resources>
