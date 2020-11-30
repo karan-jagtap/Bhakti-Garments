@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -93,7 +94,7 @@ public class WorkerDetailsActivity extends AppCompatActivity {
             String receivedUid = getIntent().getStringExtra(AppConfig.UID);
             if (uid == null) {
                 uid = receivedUid;
-            } else if (!uid.equals(receivedUid)) {
+            } else if (!uid.equals(receivedUid) && receivedUid != null) {
                 uid = receivedUid;
             }
         } catch (Exception ignore) {
@@ -200,5 +201,17 @@ public class WorkerDetailsActivity extends AppCompatActivity {
         } catch (Exception e) {
 
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(AppConfig.UID, uid);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        uid = savedInstanceState.getString(AppConfig.UID);
     }
 }

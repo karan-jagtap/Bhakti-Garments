@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/blue_dark"
     android:orientation="vertical"
-    tools:context=".activities.AddProductsToShopActivity">
+    tools:context=".activities.AddRemoveProductsToShopActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -14,7 +14,7 @@
         android:theme="@style/Theme.BhaktiGarments.AppBarOverlay">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar_AddProductsToShopActivity"
+            android:id="@+id/toolbar_AddRemoveProductsToShopActivity"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
@@ -37,14 +37,14 @@
             android:weightSum="1">
 
             <Spinner
-                android:id="@+id/spinner_products_list_AddProductsToShopActivity"
+                android:id="@+id/spinner_products_list_AddRemoveProductsToShopActivity"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1" />
 
             <ImageButton
-                android:id="@+id/imageButton_add_AddProductsToShopActivity"
+                android:id="@+id/imageButton_add_AddRemoveProductsToShopActivity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -65,7 +65,7 @@
             android:textSize="15sp" />
 
         <ListView
-            android:id="@+id/listView_selected_products_AddProductsToShopActivity"
+            android:id="@+id/listView_selected_products_AddRemoveProductsToShopActivity"
             android:listSelector="@android:color/transparent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

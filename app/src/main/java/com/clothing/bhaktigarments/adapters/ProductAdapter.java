@@ -67,7 +67,10 @@ public class ProductAdapter extends ArrayAdapter<Product> {
         return view;
     }
 
+    
+
     private void showDialog(Product product) {
+
         String message = "";
         if (from.equals(AppConfig.PRODUCT_ACTIVITY)) {
             message= "Product " + product.getSerialNo() + " | '" + product.getName() +

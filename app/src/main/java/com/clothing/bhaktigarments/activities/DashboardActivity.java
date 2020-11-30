@@ -86,7 +86,7 @@ public class DashboardActivity extends AppCompatActivity {
         detailsWorkerL.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //scanQRCode();
+                scanQRCode();
             }
         });
 
@@ -156,7 +156,6 @@ public class DashboardActivity extends AppCompatActivity {
             if (result.getContents() != null) {
                 Log.i(AppConfig.APP_NAME, "uid inside onresult = " + result.getContents());
                 checkShopOrWorkerUID(result.getContents());
-
             }
         } else {
             Log.i(AppConfig.APP_NAME, "result is null");

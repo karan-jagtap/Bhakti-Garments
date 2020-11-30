@@ -111,7 +111,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:drawableEnd="@drawable/ic_white_arrow_right_24dp"
-            android:text="View Workers" />
+            android:text="Add | Remove Workers" />
     </LinearLayout>
 
 </LinearLayout>

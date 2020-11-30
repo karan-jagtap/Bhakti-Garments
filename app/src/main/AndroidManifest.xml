@@ -16,9 +16,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.BhaktiGarments">
-        <activity android:name=".activities.AddProductsToShopActivity"
+        <activity android:name=".activities.AddRemoveProductsToShopActivity"
             android:configChanges="orientation|keyboardHidden"
-            android:label="@string/add_products"
+            android:label="@string/add_remove"
             android:parentActivityName=".activities.ShopDetailsActivity"
             android:screenOrientation="portrait"
             android:stateNotNeeded="true"
@@ -36,7 +36,7 @@
         <activity
             android:name=".activities.WorkerCompletedProductsActivity"
             android:configChanges="orientation|keyboardHidden"
-            android:label="@string/completed_products"
+            android:label="@string/add_remove"
             android:parentActivityName=".activities.WorkerDetailsActivity"
             android:screenOrientation="portrait"
             android:stateNotNeeded="true"

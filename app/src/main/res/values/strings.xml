@@ -17,4 +17,5 @@
     <string name="completed_products">Completed Products</string>
     <string name="shop_details">Shop Details</string>
     <string name="add_products">Add Products</string>
+    <string name="add_remove">Add | Remove</string>
 </resources>

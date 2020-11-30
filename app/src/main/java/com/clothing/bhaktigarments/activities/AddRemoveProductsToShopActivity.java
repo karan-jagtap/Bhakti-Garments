@@ -22,7 +22,7 @@ import com.clothing.bhaktigarments.helpers.ResponseHandler;
 
 import java.util.ArrayList;
 
-public class AddProductsToShopActivity extends AppCompatActivity {
+public class AddRemoveProductsToShopActivity extends AppCompatActivity {
 
     // components
     private Spinner spinner;
@@ -44,8 +44,8 @@ public class AddProductsToShopActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_products_to_shop);
-        Toolbar toolbar = findViewById(R.id.toolbar_AddProductsToShopActivity);
+        setContentView(R.layout.activity_add_remove_products_to_shop);
+        Toolbar toolbar = findViewById(R.id.toolbar_AddRemoveProductsToShopActivity);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
@@ -106,17 +106,17 @@ public class AddProductsToShopActivity extends AppCompatActivity {
             }
         } catch (Exception ignore) {
         }
-        spinner = findViewById(R.id.spinner_products_list_AddProductsToShopActivity);
-        listView = findViewById(R.id.listView_selected_products_AddProductsToShopActivity);
-        button = findViewById(R.id.imageButton_add_AddProductsToShopActivity);
+        spinner = findViewById(R.id.spinner_products_list_AddRemoveProductsToShopActivity);
+        listView = findViewById(R.id.listView_selected_products_AddRemoveProductsToShopActivity);
+        button = findViewById(R.id.imageButton_add_AddRemoveProductsToShopActivity);
 
-        db = new LocalDatabase(AddProductsToShopActivity.this);
-        dialog = new MessageDialog(AddProductsToShopActivity.this);
+        db = new LocalDatabase(AddRemoveProductsToShopActivity.this);
+        dialog = new MessageDialog(AddRemoveProductsToShopActivity.this);
 
         // loading and adding already selected products list
         response = db.getAllSelectedProductsOfShopUid(uid);
         selectedProductList = response.getProductArrayList();
-        selectedProductAdapter = new ProductAdapter(AddProductsToShopActivity.this,
+        selectedProductAdapter = new ProductAdapter(AddRemoveProductsToShopActivity.this,
                 selectedProductList, AppConfig.ADD_PRODUCTS_TO_SHOP_ACTIVITY, uid);
         listView.setAdapter(selectedProductAdapter);
 
@@ -144,7 +144,7 @@ public class AddProductsToShopActivity extends AppCompatActivity {
                 spinner.setEnabled(false);
                 button.setEnabled(false);
             }
-            displayAdapter = new ArrayAdapter<>(AddProductsToShopActivity.this,
+            displayAdapter = new ArrayAdapter<>(AddRemoveProductsToShopActivity.this,
                     android.R.layout.simple_list_item_1,
                     displayArrayList);
             spinner.setAdapter(displayAdapter);

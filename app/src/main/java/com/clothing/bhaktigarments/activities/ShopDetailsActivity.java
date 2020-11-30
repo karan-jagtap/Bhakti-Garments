@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -71,7 +70,7 @@ public class ShopDetailsActivity extends AppCompatActivity {
         addProdBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(ShopDetailsActivity.this, AddProductsToShopActivity.class);
+                Intent i = new Intent(ShopDetailsActivity.this, AddRemoveProductsToShopActivity.class);
                 i.putExtra(AppConfig.UID, uid);
                 startActivity(i);
             }
