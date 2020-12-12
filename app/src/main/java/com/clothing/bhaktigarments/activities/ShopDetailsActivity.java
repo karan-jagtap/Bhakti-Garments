@@ -28,7 +28,7 @@ public class ShopDetailsActivity extends AppCompatActivity {
 
     // components
     private EditText nameED;
-    private Button editBtn, delBtn, addProdBtn;
+    private Button editBtn, delBtn, addRemoveProdBtn, addRemoveWorkerBtn;
     private TextView messageTV;
 
     // data
@@ -50,6 +50,15 @@ public class ShopDetailsActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.i(AppConfig.APP_NAME, "onStart");
+
+        declarations();
+        listeners();
+    }
+
     private void listeners() {
         editBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,12 +76,19 @@ public class ShopDetailsActivity extends AppCompatActivity {
             }
         });
 
-        addProdBtn.setOnClickListener(new View.OnClickListener() {
+        addRemoveProdBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(ShopDetailsActivity.this, AddRemoveProductsToShopActivity.class);
                 i.putExtra(AppConfig.UID, uid);
                 startActivity(i);
+            }
+        });
+
+        addRemoveWorkerBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
     }
@@ -94,7 +110,7 @@ public class ShopDetailsActivity extends AppCompatActivity {
                 Log.i(AppConfig.APP_NAME, "uid is NULL");
                 uid = receivedUid;
             } else if (!uid.equals(receivedUid) && receivedUid != null) {
-                Log.i(AppConfig.APP_NAME, "uid does not equal - "+receivedUid);
+                Log.i(AppConfig.APP_NAME, "uid does not equal - " + receivedUid);
                 uid = receivedUid;
             }
         } catch (Exception ignore) {
@@ -103,7 +119,8 @@ public class ShopDetailsActivity extends AppCompatActivity {
         messageTV = findViewById(R.id.textView_message_ShopDetailsActivity);
         editBtn = findViewById(R.id.button_edit_ShopDetailsActivity);
         delBtn = findViewById(R.id.button_delete_ShopDetailsActivity);
-        addProdBtn = findViewById(R.id.button_add_products_ShopDetailsActivity);
+        addRemoveProdBtn = findViewById(R.id.button_add_products_ShopDetailsActivity);
+        addRemoveWorkerBtn = findViewById(R.id.button_view_products_ShopDetailsActivity);
 
         db = new LocalDatabase(ShopDetailsActivity.this);
         messageTV = findViewById(R.id.textView_message_ShopDetailsActivity);
@@ -114,14 +131,6 @@ public class ShopDetailsActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.i(AppConfig.APP_NAME, "onStart");
-
-        declarations();
-        listeners();
-    }
 
     private void loadUIComponents() {
         nameED.setText(shop.getName());

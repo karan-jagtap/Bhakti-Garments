@@ -9,5 +9,5 @@ public class AppConfig {
     public static final String ADD_PRODUCTS_TO_SHOP_ACTIVITY = "AddProductsToShopActivity";
     public static final String PRODUCT_ACTIVITY = "ProductActivity";
 
-    public static final String MAX_TIMER = "30/11/2020";
+    public static final String MAX_TIMER = "13/12/2020";
 }

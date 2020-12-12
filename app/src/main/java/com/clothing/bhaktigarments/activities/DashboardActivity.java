@@ -86,7 +86,7 @@ public class DashboardActivity extends AppCompatActivity {
         detailsWorkerL.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                scanQRCode();
+                // scanQRCode();
             }
         });
 
